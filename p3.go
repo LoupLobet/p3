@@ -6,25 +6,22 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"log"
 	"os/exec"
+	"log"
 )
 
 const SHELL_PATH = "/bin/sh"
 const SHELL_OPTION = "-c"
 
-// flags
 var (
 	oflag *bool
 	sflag *bool
-	vflag *bool
 )
 
 func main() {
 	// parse command line
 	oflag = flag.Bool("o", false, "output")
 	sflag = flag.Bool("s", false, "symlink")
-	vflag = flag.Bool("v", false, "verbose")
 	flag.Parse()
 
 	if len(flag.Args()) < 1 {
