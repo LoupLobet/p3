@@ -155,6 +155,6 @@ func RunShellCmd(command string) (string, error) {
 }
 
 func Usage() {
-	fmt.Println("usage: p3 [-os] [config ...]")
+	fmt.Println("usage: p3 [-q] [config ...]")
 	os.Exit(0)
 }
