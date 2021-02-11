@@ -8,24 +8,25 @@ import (
 	"os"
 	"os/exec"
 	"log"
+	"path/filepath"
 )
 
 const SHELL_PATH = "/bin/sh"
 const SHELL_OPTION = "-c"
+const DEFAULT_CONFIG = ".p3/default"
 
-var (
-	oflag *bool
-	sflag *bool
-)
+var qflag *bool
 
 func main() {
-	// parse command line
-	oflag = flag.Bool("o", false, "output")
-	sflag = flag.Bool("s", false, "symlink")
+	qflag = flag.Bool("q", false, "quiet")
 	flag.Parse()
 
-	if len(flag.Args()) < 1 {
-		Usage()
+	if len(flag.Args()) == 0 {
+		if EvalPath(DEFAULT_CONFIG, false) {
+			RunConfig(DEFAULT_CONFIG)
+		} else {
+			Usage()
+		}
 	}
 	for i := 0; i < len(flag.Args()); i++ {
 		RunConfig(flag.Args()[i])
@@ -74,8 +75,12 @@ func EvalConditions(conds string) bool {
 func EvalPath(path string, neg bool) bool {
 	var bval bool
 
-	_, err := os.Stat(path)
-	bval = (err == nil)
+	// filepath.Glob() support wildcards
+	matches, err := filepath.Glob(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	bval = (len(matches) > 0)
 	if neg {
 		bval = !bval
 	}
@@ -133,7 +138,7 @@ func RunConfig(config string) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			if *oflag {
+			if !*qflag {
 				fmt.Printf("%s", stdout)
 			}
 		}
@@ -150,6 +155,6 @@ func RunShellCmd(command string) (string, error) {
 }
 
 func Usage() {
-	fmt.Println("usage: p3 [-ovs] [config ...]")
+	fmt.Println("usage: p3 [-os] [config ...]")
 	os.Exit(0)
 }
