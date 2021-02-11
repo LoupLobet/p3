@@ -44,9 +44,6 @@ func EvalConditions(conds string) bool {
 			if conds[i] == '\\' {
 				escaped = true
 				continue
-			} else if len(token) == 0 && conds[i] == '!' {
-				negation = true
-				continue
 			} else if i == len(conds) - 1 {
 				blank = true
 				token += string(conds[i])
@@ -64,8 +61,13 @@ func EvalConditions(conds string) bool {
 				return false
 			}
 			token = ""
+			negation = false
 		}
-		token += string(conds[i])
+		if len(token) == 0 && conds[i] == '!' && !escaped {
+			negation = true
+		} else {
+			token += string(conds[i])
+		}
 		blank = false
 		escaped = false
 	}
@@ -84,13 +86,14 @@ func EvalPath(path string, neg bool) bool {
 	if neg {
 		bval = !bval
 	}
+	fmt.Println(path, bval)
 	return bval
 }
 
 func GetConditions(line string) (string, int) {
 	for i := 0; i < len(line) - 1; i++ {
 		if line[i] != '\\' && line[i + 1] == ':' {
-			return line[:i], i + 2
+			return line[:i + 1], i + 2
 		}
 	}
 	return "", -1
