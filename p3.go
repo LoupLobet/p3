@@ -86,7 +86,6 @@ func EvalPath(path string, neg bool) bool {
 	if neg {
 		bval = !bval
 	}
-	fmt.Println(path, bval)
 	return bval
 }
 
@@ -134,7 +133,7 @@ func RunConfig(config string) {
 		}
 		conditions, commandindex := GetConditions(line)
 		if conditions == "" {
-			log.Println("parsing: missing condition")
+			log.Fatal("parsing: missing condition")
 		}
 		if EvalConditions(conditions) {
 			stdout, err := RunShellCmd(scnr.Text()[commandindex:])
