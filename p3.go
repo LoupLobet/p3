@@ -77,7 +77,7 @@ func EvalConditions(conds string) bool {
 func EvalPath(path string, neg bool) bool {
 	var bval bool
 
-	// filepath.Glob() support wildcards
+	// filepath.Glob() supports wildcards
 	matches, err := filepath.Glob(path)
 	if err != nil {
 		log.Fatal(err)
